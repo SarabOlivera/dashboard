@@ -9,7 +9,7 @@ import {
   CheckCircle,
   AlertTriangle,
 } from "lucide-react";
-
+import PriceTrends from "./PriceTrends";
 export default function Dashboard() {
   const stats = [
     {
@@ -155,45 +155,7 @@ export default function Dashboard() {
       <div className="charts-section">
         <div className="chart-container-large">
           <div className="chart-header">
-            <h3 className="chart-title">Unique Visitor</h3>
-            <div className="chart-tabs">
-              <button className="chart-tab">Monthly</button>
-              <button className="chart-tab active">Weekly</button>
-            </div>
-          </div>
-          <div className="area-chart">
-            <svg viewBox="0 0 400 200" className="chart-svg">
-              <defs>
-                <linearGradient
-                  id="areaGradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.05" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M 0 180 Q 50 160 100 140 T 200 120 T 300 100 T 400 80 L 400 200 L 0 200 Z"
-                fill="url(#areaGradient)"
-              />
-              <path
-                d="M 0 180 Q 50 160 100 140 T 200 120 T 300 100 T 400 80"
-                stroke="#3b82f6"
-                strokeWidth="2"
-                fill="none"
-              />
-            </svg>
-            <div className="chart-labels">
-              <span>Jan</span>
-              <span>Feb</span>
-              <span>Mar</span>
-              <span>Apr</span>
-              <span>May</span>
-              <span>Jun</span>
-            </div>
+            <PriceTrends />
           </div>
         </div>
 

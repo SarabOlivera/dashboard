@@ -935,3 +935,19 @@ a:focus {
     display: none;
   }
 }
+
+.explanation-section {
+  background: #f3f4f6;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 40px;
+}
+
+.explanation-section h4 {
+  margin-bottom: 10px;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
