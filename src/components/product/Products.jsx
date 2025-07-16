@@ -19,13 +19,18 @@ export default function Products() {
     };
     fetchProduct();
   }, []);
-  const handleEdit = (id) => {
-    console.log("Edit product:", id);
-  };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProduct(product.filter((product) => product.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      if (window.confirm("Are you sure you want to delete this product?")) {
+        await axios.delete(`http://localhost:3000/products/${id}`);
+        alert("Producto eliminado correctamente");
+      } else {
+        alert("No se ha logrado eliminar correctamente");
+      }
+      setProduct((prev) => prev.filter((p) => p.id !== id));
+    } catch (error) {
+      console.log("Falla la entrada a Api", error);
     }
   };
 
@@ -74,13 +79,11 @@ export default function Products() {
                 </td>
                 <td>
                   <div className="table-actions">
-                    <button
-                      onClick={() => handleEdit(product.id)}
-                      className="btn-icon edit"
-                      title="Edit product"
-                    >
-                      <Edit size={16} />
-                    </button>
+                    <Link to={`/addproducts/${product.id}`}>
+                      <button className="btn-icon edit" title="Edit product">
+                        <Edit size={16} />
+                      </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(product.id)}
                       className="btn-icon delete"

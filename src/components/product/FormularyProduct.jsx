@@ -1,7 +1,9 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 function FormularyProduct() {
   const [inputName, setInputName] = useState("");
   const [inputDescription, setInputDescription] = useState("");
@@ -9,80 +11,112 @@ function FormularyProduct() {
   const [inputStock, setInputStock] = useState("");
   const [inputPrice, setInputPrice] = useState("");
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/products/${id}`
+        );
+        const product = response.data;
+        setInputName(product.name);
+        setInputDescription(product.description);
+        setInputPhoto(product.photo);
+        setInputStock(product.stock);
+        setInputPrice(product.price);
+      } catch (error) {
+        console.log("Falla la entrada a Api", error);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   const submitCheck = async (e) => {
     e.preventDefault();
+
+    const productData = {
+      name: inputName,
+      description: inputDescription,
+      photo: inputPhoto,
+      stock: inputStock,
+      price: inputPrice,
+    };
+
     try {
-      const response = await axios.post("http://localhost:3000/products", {
-        name: inputName,
-        description: inputDescription,
-        photo: inputPhoto,
-        stock: inputStock,
-        price: inputPrice,
-      });
+      if (id) {
+        await axios.patch(`http://localhost:3000/products/${id}`, productData);
+      } else {
+        console.log("Creando producto:", productData);
+        await axios.post("http://localhost:3000/products", productData);
+      }
       navigate("/");
     } catch (error) {
-      console.log("Error:", error);
+      console.error("Error real:", error.message, error);
     }
   };
+
   return (
-    <>
-      <Form>
-        <Form.Group className="mb-3">
-          <Form.Label>Your name</Form.Label>
-          <Form.Control
-            className="InputPass"
-            type="text"
-            placeholder="Your name"
-            onChange={(e) => setInputName(e.target.value)}
-          />
-        </Form.Group>
+    <Form className="form-container" onSubmit={submitCheck}>
+      <Form.Group className="mb-3">
+        <Form.Label>Nombre del Producto</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter product name"
+          value={inputName}
+          onChange={(e) => setInputName(e.target.value)}
+        />
+      </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Desription</Form.Label>
-          <Form.Control
-            className="InputPass"
-            type="text"
-            placeholder=" InputDescription"
-            onChange={(e) => setInputDescription(e.target.value)}
-          />
-        </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Descripción</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={3}
+          placeholder="Enter description"
+          value={inputDescription}
+          onChange={(e) => setInputDescription(e.target.value)}
+        />
+      </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Photo</Form.Label>
-          <Form.Control
-            className="InputPass"
-            type="Photo"
-            placeholder="Photo Price"
-            onChange={(e) => setInputPhoto(e.target.value)}
-          />
-        </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>URL de la Foto</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter photo URL"
+          value={inputPhoto}
+          onChange={(e) => setInputPhoto(e.target.value)}
+        />
+      </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>StocksetInputStock</Form.Label>
-          <Form.Control
-            className="InputPass"
-            type="StocksetInputStock"
-            placeholder="StocksetInputStock"
-            onChange={(e) => setInputStock(e.target.value)}
-          />
-        </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Stock</Form.Label>
+        <Form.Control
+          type="number"
+          placeholder="Enter stock quantity"
+          value={inputStock}
+          onChange={(e) => setInputStock(e.target.value)}
+        />
+      </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Price</Form.Label>
-          <Form.Control
-            className="InputPass"
-            type="text"
-            placeholder="Price"
-            onChange={(e) => setInputPrice(e.target.value)}
-          />
-        </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Precio ($)</Form.Label>
+        <Form.Control
+          type="number"
+          placeholder="Enter price"
+          step="0.01"
+          value={inputPrice}
+          onChange={(e) => setInputPrice(e.target.value)}
+        />
+      </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
-    </>
+      <Button variant="primary" type="submit">
+        {id ? "Actualizar" : "Crear"}
+      </Button>
+    </Form>
   );
 }
 
